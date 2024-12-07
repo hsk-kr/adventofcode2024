@@ -10,8 +10,7 @@ answer
 */
 package main
 
-import (
-	"fmt"
+import ( "fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -54,6 +53,10 @@ func main() {
     var f func (idx int, total int64) bool;
 
     f = func (idx int, total int64) bool {
+      if total > shouldBe {
+        return false
+      }
+
       if idx == len(factors) {
         return total == shouldBe
       }

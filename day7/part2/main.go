@@ -64,7 +64,7 @@ func concatenate(na uint64, nb uint64) uint64 {
 }
 
 func main() {
-  lines := readInput("./input")
+  lines := readInput("./example")
 
   var answer uint64 = 0
 
@@ -88,15 +88,34 @@ func main() {
       factors = append(factors, convertedNum)
     }
 
+    // fmt.Println(factors, nums)
+    // if len(nums) <= 2 {
+    //   fmt.Println("fuck", nums)
+    // }
+    // if shouldBe <= 0 {
+    //   fmt.Println("shouldBe is less than or equal to zero", shouldBe)
+    // }
+    // if len(factors)<= 0 {
+    //   fmt.Println("there is no factors", factors, nums)
+    // }
+
     var f func (idx int, total uint64) bool
 
-    f = func (idx int,  total uint64) bool {
-      if idx == len(factors) {
+    f = func (idx int, total uint64) bool {
+      if total > shouldBe { 
+        return false
+      }
+
+      if idx == len(factors)  {
         return total == shouldBe
       }
 
       option := factors[idx]
       prevTotal := total
+
+      // if option == 0 {
+      //   fmt.Println("option is zero", nums)
+      // }
 
       total = prevTotal + option
       if f(idx + 1, total) {
@@ -112,11 +131,9 @@ func main() {
       return f(idx + 1, total) 
     }
 
-
     if f(0, 0) { 
       //fmt.Println(shouldBe, factors)
       answer += shouldBe
-      fmt.Println(answer, shouldBe)
     }
   }
 
