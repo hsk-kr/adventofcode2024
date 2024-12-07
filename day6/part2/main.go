@@ -152,7 +152,11 @@ func canEscape(pathLines []string, startPosition position, obstacles map[positio
       return false
     }
 
-    visited[pos] = dir
+    if pos != startPosition {
+      visited[pos] = dir
+    }else {
+      fmt.Println("ignore first one")
+    }
 
     prevPosition = pos
     pos.x += force.x
