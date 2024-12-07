@@ -51,26 +51,26 @@ func main() {
       factors = append(factors, convertedNum)
     }
 
-    var f func (idx int, prevTotal int64, total int64) bool;
+    var f func (idx int, total int64) bool;
 
-    f = func (idx int, prevTotal int64, total int64) bool {
+    f = func (idx int, total int64) bool {
       if idx == len(factors) {
         return total == shouldBe
       }
       option := factors[idx]
 
-      prevTotal = total
+      prevTotal := total
       total += option
-      if f(idx + 1, prevTotal, total) {
+      if f(idx + 1, total) {
         return true
       }
 
       total = prevTotal
       total *= option
-      return f(idx + 1, prevTotal, total) 
+      return f(idx + 1, total) 
     }
 
-    if f(0, 0, 0) { 
+    if f(0, 0) { 
       answer += shouldBe
     }
   }
