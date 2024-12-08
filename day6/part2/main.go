@@ -1,3 +1,6 @@
+/**
+the latest answer: 1034, which is wrong
+*/
 package main
 
 import (
@@ -128,6 +131,25 @@ func hasVisitiedWithSameDir(dirs []int, dir int) bool {
   return false
 }
 
+func printMap(pathLines[] string, obstacles map[position]bool, currentPosition position) {
+  fmt.Println("---")
+  for y, line := range pathLines {
+    for x := range line {
+      pos := position { x, y }
+      _, isObstaclePos := obstacles[pos]
+      if currentPosition == pos {
+        fmt.Printf("*")
+      } else if isObstaclePos {
+        fmt.Printf("#")
+      } else {
+        fmt.Printf(".")
+      }
+    }
+    fmt.Println()
+  }
+  fmt.Println("---")
+}
+
 func canEscape(pathLines []string, startPosition position, obstacles map[position]bool) bool {
   pos := startPosition
   prevPosition := position{x: 0, y: 0}
@@ -142,14 +164,18 @@ func canEscape(pathLines []string, startPosition position, obstacles map[positio
       continue
     }
 
+    //printMap(pathLines, obstacles, pos)
+    //fmt.Println(visited)
+
     visitedDir, exists := visited[pos]
-    if exists && visitedDir == dir {
-      return false
-    }
+     if exists && visitedDir == dir {
+       return false
+     }
 
     visited[pos] = dir
 
     force := getPositionForceFromDir(dir)
+
     prevPosition = pos
     pos.x += force.x
     pos.y += force.y
@@ -175,7 +201,7 @@ func main() {
       answer++
     }
 
-    inputInfo.obstacles[pos] = false
+    delete(inputInfo.obstacles, pos)
   }
   
   fmt.Printf("Answer: %d\n", answer);
