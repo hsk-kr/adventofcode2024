@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -11,7 +10,6 @@ type position struct {
   x int
   y int
 }
-
 func readInput(path string) [][]string {
   content, err := os.ReadFile(path)
   
@@ -29,17 +27,33 @@ func readInput(path string) [][]string {
   return result
 }
 
-func getAntinodePosition(antennaMap [][]string, posA position, posB position) (position, error) {
-  pos := position {x: 0, y: 0}
+func getAntinodePositions(antennaMap [][]string, posA position, posB position) []position {
+  posList := make([]position, 0)
+  force := position {x: 0, y: 0}
 
-  pos.x = posA.x + posA.x - posB.x
-  pos.y = posA.y + posA.y - posB.y
+  force.x = posA.x - posB.x
+  force.y = posA.y - posB.y
 
-  if pos.y >= len(antennaMap) || pos.x >= len(antennaMap[0]) || pos.y < 0 || pos.x < 0 {
-    return pos, errors.New("out of range")
+  // same position
+  if force.x == 0 && force.y == 0 {
+    return posList
   }
 
-  return pos, nil
+  pos := position{x: posA.x, y: posA.y}
+
+  for {
+    pos.x = pos.x + force.x 
+    pos.y = pos.y + force.y
+
+    if pos.y >= len(antennaMap) || pos.x >= len(antennaMap[0]) || pos.y < 0 || pos.x < 0 {
+      break
+    }
+
+    posList = append(posList, position { x: pos.x, y : pos. y })
+  }
+
+  return posList
+  
 }
 
 func countAntinodes(antennaMap [][]string) int {
@@ -47,7 +61,7 @@ func countAntinodes(antennaMap [][]string) int {
 
   for _, lines := range antennaMap {
     for _, a := range lines {
-      if len(a) > 1 {
+      if a != "." {
         count++
       }
     }
@@ -87,21 +101,13 @@ func main() {
   for antenna, posList := range antennaPosMap {
     for _, posA := range posList {
       for _, posB := range posList {
-        antinodePos, err := getAntinodePosition(antennaMap, posA, posB)
+        antinodePosList := getAntinodePositions(antennaMap, posA, posB)
+        fmt.Println(antinodePosList)
         
-        if err != nil {
-          continue
-        }
-
-        // if antennaMap[antinodePos.y][antinodePos.x][0] == '.' {
-        //   antennaMap[antinodePos.y][antinodePos.x] = "#" + antenna
-        // } else if antennaMap[antinodePos.y][antinodePos.x][0] == '#' && 
-        //           !strings.Contains(antennaMap[antinodePos.y][antinodePos.x], antenna) {
-        //   antennaMap[antinodePos.y][antinodePos.x] += antenna
-        // }
-
-        if !strings.Contains(antennaMap[antinodePos.y][antinodePos.x], antenna) {
-          antennaMap[antinodePos.y][antinodePos.x] += antenna
+        for _, antinodePos := range antinodePosList {
+          if  !strings.Contains(antennaMap[antinodePos.y][antinodePos.x], antenna) {
+            antennaMap[antinodePos.y][antinodePos.x] += antenna 
+          }
         }
       }
     }
