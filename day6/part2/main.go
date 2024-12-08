@@ -134,30 +134,22 @@ func canEscape(pathLines []string, startPosition position, obstacles map[positio
   dir := UP
  
   visited := make(map[position]int)
-  please := 0
 
   for !isOutOfRange(pathLines, pos) {
-    if obstacles[pos] {
+    if obstacles[pos] && pos != startPosition {
       pos = prevPosition
       dir = nextDir(dir)
       continue
     }
 
-    force := getPositionForceFromDir(dir)
-
     visitedDir, exists := visited[pos]
-    please++
     if exists && visitedDir == dir {
-      fmt.Println(please, visitedDir, dir, pos, startPosition)
       return false
     }
 
-    if pos != startPosition {
-      visited[pos] = dir
-    }else {
-      fmt.Println("ignore first one")
-    }
+    visited[pos] = dir
 
+    force := getPositionForceFromDir(dir)
     prevPosition = pos
     pos.x += force.x
     pos.y += force.y

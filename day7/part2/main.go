@@ -64,7 +64,7 @@ func concatenate(na uint64, nb uint64) uint64 {
 }
 
 func main() {
-  lines := readInput("./example")
+  lines := readInput("./input")
 
   var answer uint64 = 0
 
@@ -99,15 +99,15 @@ func main() {
     //   fmt.Println("there is no factors", factors, nums)
     // }
 
-    var f func (idx int, total uint64) bool
+    var f func (idx int, total uint64, test string) (bool, string)
 
-    f = func (idx int, total uint64) bool {
+    f = func (idx int, total uint64, test string) (bool, string) {
       if total > shouldBe { 
-        return false
+        return false, ""
       }
 
       if idx == len(factors)  {
-        return total == shouldBe
+        return total == shouldBe, test
       }
 
       option := factors[idx]
@@ -117,22 +117,38 @@ func main() {
       //   fmt.Println("option is zero", nums)
       // }
 
+      var rst bool
+      prevTest := test
       total = prevTotal + option
-      if f(idx + 1, total) {
-        return true
+      if rst, test = f(idx + 1, total, test+"+"); rst {
+        return true, test
       }
 
+      test = prevTest
       total = prevTotal * option
-      if f(idx + 1, total)  {
-        return true
+      if rst, test = f(idx + 1, total, test+"*"); rst  {
+        return true, test
       }
 
+      test = prevTest
       total = concatenate(prevTotal, option)
-      return f(idx + 1, total) 
+      return f(idx + 1, total, test+"|")
     }
 
-    if f(0, 0) { 
-      //fmt.Println(shouldBe, factors)
+    var rst bool
+    var test string
+    if rst, test = f(0, 0, test); rst { 
+      var testOutput string = ""
+
+      for i, factor := range factors {
+        if len(factors) - 1 == i {
+          testOutput = fmt.Sprintf("%s %d", testOutput, factor)
+        } else {
+          testOutput = fmt.Sprintf("%s %d %c", testOutput, factor, test[i + 1])
+        }
+      }
+
+      fmt.Println(answer, shouldBe, testOutput)
       answer += shouldBe
     }
   }
