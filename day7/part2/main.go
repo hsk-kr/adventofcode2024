@@ -106,6 +106,9 @@ func main() {
         return false, ""
       }
 
+      if len(factors) == 1 {
+        return factors[0] == shouldBe, test
+      }
       if idx == len(factors)  {
         return total == shouldBe, test
       }
