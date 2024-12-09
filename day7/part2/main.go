@@ -1,5 +1,5 @@
 /*
-*
+*zz
 1.
 
 a + b + c + d
@@ -37,30 +37,19 @@ func readInput(path string) []string {
 }
 
 func concatenate(na uint64, nb uint64) uint64 {
-  sna := strconv.FormatUint(na, 10)
-  snb := strconv.FormatUint(nb, 10)
-
-  num, err := strconv.ParseUint(sna + snb, 10, 64)
-
-  if err != nil {
-    panic(err)
+  if na == 0 {
+    return nb
   }
 
-  return num
-  // if na == 0 {
-  //   ///fmt.Printf("returns %d - na: %d, nb: %d\n", nb, na, nb);
-  //   return nb
-  // }
-  //
-  // var numToMultiply uint64 = 1
-  // tmpN := nb
-  //
-  // for tmpN > 0 {
-  //   tmpN /= 10
-  //   numToMultiply *= 10
-  // }
-  //
-  // return na * numToMultiply + nb
+  var numToMultiply uint64 = 1
+  tmpN := nb
+
+  for tmpN > 0 {
+    tmpN /= 10
+    numToMultiply *= 10
+  }
+
+  return na * numToMultiply + nb
 }
 
 func main() {
@@ -88,70 +77,29 @@ func main() {
       factors = append(factors, convertedNum)
     }
 
-    // fmt.Println(factors, nums)
-    // if len(nums) <= 2 {
-    //   fmt.Println("fuck", nums)
-    // }
-    // if shouldBe <= 0 {
-    //   fmt.Println("shouldBe is less than or equal to zero", shouldBe)
-    // }
-    // if len(factors)<= 0 {
-    //   fmt.Println("there is no factors", factors, nums)
-    // }
+    var f func (remain []uint64, total uint64) bool
 
-    var f func (idx int, total uint64, test string) (bool, string)
-
-    f = func (idx int, total uint64, test string) (bool, string) {
-      if total > shouldBe { 
-        return false, ""
+    f = func (remain []uint64, total uint64) bool {
+      if len (remain) == 0 { 
+        return total == shouldBe
       }
 
-      if len(factors) == 1 {
-        return factors[0] == shouldBe, test
-      }
-      if idx == len(factors)  {
-        return total == shouldBe, test
-      }
-
-      option := factors[idx]
-      prevTotal := total
-
-      // if option == 0 {
-      //   fmt.Println("option is zero", nums)
-      // }
-
-      var rst bool
-      prevTest := test
-      total = prevTotal + option
-      if rst, test = f(idx + 1, total, test+"+"); rst {
-        return true, test
+      firstNum := remain[0]
+      remain = remain[1:]
+      if f(remain, total + firstNum) {
+        return true
       }
 
-      test = prevTest
-      total = prevTotal * option
-      if rst, test = f(idx + 1, total, test+"*"); rst  {
-        return true, test
+      if f(remain, total * firstNum)  {
+        return true
       }
 
-      test = prevTest
-      total = concatenate(prevTotal, option)
-      return f(idx + 1, total, test+"|")
+      return f(remain, concatenate(total, firstNum))
     }
 
-    var rst bool
-    var test string
-    if rst, test = f(0, 0, test); rst { 
-      var testOutput string = ""
-
-      for i, factor := range factors {
-        if len(factors) - 1 == i {
-          testOutput = fmt.Sprintf("%s %d", testOutput, factor)
-        } else {
-          testOutput = fmt.Sprintf("%s %d %c", testOutput, factor, test[i + 1])
-        }
-      }
-
-      fmt.Println(answer, shouldBe, testOutput)
+    firstNum := factors[0]
+    factors = factors[1:]
+    if f(factors, firstNum) { 
       answer += shouldBe
     }
   }
