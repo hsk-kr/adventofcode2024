@@ -3,9 +3,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strings"
-)
+	"os" 
+  "strings")
 
 func readInput(path string) string {
   content, err := os.ReadFile(path)
@@ -58,7 +57,7 @@ func main() {
       }
     }
 
-    front ++
+    front += 2
   }
 
   answer := 0
