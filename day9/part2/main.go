@@ -4,7 +4,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -45,54 +44,35 @@ func main() {
   }
   front := 1
 
-
   for front < initBack {
-    found := true 
+    for i := initBack; i > front; i -= 2 {
+      if blocks[i][0] != -1 && blocks[front][len(blocks[front])-2] == -1 && blocks[front][len(blocks[front]) - 1] > 0 && blocks[i][1] <= blocks[front][len(blocks[front]) - 1] {
+        blocks[front][len(blocks[front]) - 1] -= blocks[i][1]
 
-    for found { 
-      found = false
-      for i := initBack; i > front; i -= 2 {
-        if blocks[i][1] > 0 && blocks[i][1] <= blocks[front][1] {
-          blocks[front] = append(blocks[front], blocks[i][0], blocks[i][1])
-          blocks[front][1] -= blocks[i][1]
-          blocks[i][0] = -1
-          initBack -= 2
-          found = true
+        blocks[front] = append(blocks[front][:len(blocks[front])-2] , blocks[i][0], blocks[i][1], blocks[front][len(blocks[front])-2], blocks[front][len(blocks[front])-1])
+        blocks[i][0] = -1
+
+        if blocks[front][len(blocks[front]) - 1] == 0 {
+          break
         }
       }
     }
 
-    front += 2
+    front ++
   }
 
-  for i := 1; i < len(blocks); i += 2 {
-    block := blocks[i]
-    if block[0] == -1 && block[1] > 0 {
-      blocks[i] = append(block[2:], block[:2]...)
-    }
-  }
-
-  final := ""
+  answer := 0
+  idx := 0
 
   for _, block := range blocks {
     for i := 0; i < len(block); i += 2 {
-      char := strconv.Itoa(block[i])
-      if char == "-1" {
-        char = "."
-      }
       for j := 0; j < block[i + 1]; j++ {
-        final += char
+        fmt.Printf("%d*%d ", block[i], idx)
+        if block[i] != -1 {
+          answer += block[i] * idx
+        }
+        idx++
       }
-    }
-  }
-
-  fmt.Println(final)
-  answer := 0
-
-  for i, c := range final {
-    if c != '.' {
-      num := c - '0'
-      answer += int(num) * i
     }
   }
 
